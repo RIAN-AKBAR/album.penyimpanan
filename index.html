@@ -60,14 +60,60 @@
   <script>
     const menuBtn = document.getElementById('menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
+    const uploadForm = document.getElementById('upload-form');
+    const gallery = document.getElementById('gallery');
 
     menuBtn.addEventListener('click', () => {
       mobileMenu.classList.toggle('hidden');
     });
 
-    // Upload form handling (mock)
-    const uploadForm = document.getElementById('upload-form');
-    const gallery = document.getElementById('gallery');
+    // Load existing photos from localStorage
+    function loadPhotos() {
+      const photos = JSON.parse(localStorage.getItem('photos')) || [];
+      photos.forEach(photo => {
+        addPhotoToGallery(photo);
+      });
+    }
+
+    // Add photo to gallery
+    function addPhotoToGallery(photo) {
+      const div = document.createElement('div');
+      div.className = 'relative group rounded-lg overflow-hidden shadow-md bg-white';
+
+      const img = document.createElement('img');
+      img.src = photo.src;
+      img.alt = `Foto yang diupload bernama ${photo.name}`;
+      img.className = 'w-full h-48 object-cover';
+
+      const btn = document.createElement('button');
+      btn.className = 'absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition';
+      btn.setAttribute('aria-label', `Hapus foto ${photo.name}`);
+      btn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+
+      btn.addEventListener('click', () => {
+        div.remove();
+        removePhotoFromStorage(photo.name);
+      });
+
+      // Tambahkan elemen <a> untuk download
+      const downloadLink = document.createElement('a');
+      downloadLink.href = photo.src; // Set URL gambar
+      downloadLink.download = photo.name; // Set nama file untuk diunduh
+      downloadLink.className = 'absolute bottom-2 left-2 bg-blue-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition';
+      downloadLink.innerHTML = '<i class="fas fa-download"></i>'; // Ikon download
+
+      div.appendChild(img);
+      div.appendChild(btn);
+      div.appendChild(downloadLink); // Tambahkan link download ke div
+      gallery.prepend(div);
+    }
+
+    // Remove photo from localStorage
+    function removePhotoFromStorage(name) {
+      const photos = JSON.parse(localStorage.getItem('photos')) || [];
+      const updatedPhotos = photos.filter(photo => photo.name !== name);
+      localStorage.setItem('photos', JSON.stringify(updatedPhotos));
+    }
 
     uploadForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -77,39 +123,20 @@
         return;
       }
 
+      const photos = JSON.parse(localStorage.getItem('photos')) || [];
+
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const reader = new FileReader();
 
         reader.onload = function (event) {
-          const div = document.createElement('div');
-          div.className = 'relative group rounded-lg overflow-hidden shadow-md bg-white';
-
-          const img = document.createElement('img');
-          img.src = event.target.result;
-          img.alt = `Foto yang diupload bernama ${file.name}`;
-          img.className = 'w-full h-48 object-cover';
-
-          const btn = document.createElement('button');
-          btn.className = 'absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition';
-          btn.setAttribute('aria-label', `Hapus foto ${file.name}`);
-          btn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-
-          btn.addEventListener('click', () => {
-            div.remove();
-          });
-
-          // Tambahkan elemen <a> untuk download
-          const downloadLink = document.createElement('a');
-          downloadLink.href = event.target.result; // Set URL gambar
-          downloadLink.download = file.name; // Set nama file untuk diunduh
-          downloadLink.className = 'absolute bottom-2 left-2 bg-blue-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition';
-          downloadLink.innerHTML = '<i class="fas fa-download"></i>'; // Ikon download
-
-          div.appendChild(img);
-          div.appendChild(btn);
-          div.appendChild(downloadLink); // Tambahkan link download ke div
-          gallery.prepend(div);
+          const photo = {
+            name: file.name,
+            src: event.target.result
+          };
+          photos.push(photo);
+          localStorage.setItem('photos', JSON.stringify(photos));
+          addPhotoToGallery(photo);
         };
 
         reader.readAsDataURL(file);
@@ -118,12 +145,8 @@
       uploadForm.reset();
     });
 
-    // Add delete functionality to existing photos
-    document.querySelectorAll('#gallery > div > button').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.target.closest('div').remove();
-      });
-    });
+    // Load photos on page load
+    loadPhotos();
   </script>
 </body>
 </html>
