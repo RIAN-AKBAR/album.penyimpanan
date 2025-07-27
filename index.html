@@ -3,58 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GalleryPix - Your Photo Storage</title>
-    <link rel="stylesheet" href="style.css">
+    <title>GalleryPix</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta name="theme-color" content="#0f0f0f">
+    <style>
+        :root {
+            --primary: #bb86fc;
+            --primary-dark: #9a67cc;
+            --background: #0f0f0f;
+            --surface: #1e1e1e;
+            --surface-light: #2d2d2d;
+            --on-primary: #000000;
+            --on-surface: #ffffff;
+            --border-radius: 16px;
+            --border-radius-sm: 8px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            color: var(--on-surface);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: var(--on-primary);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .albums-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+
+        .album-card {
+            background: var(--surface);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .album-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .album-cover {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .album-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .album-card:hover .album-overlay {
+            opacity: 1;
+        }
+
+        .album-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .album-actions button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .album-actions button:hover {
+            transform: scale(1.1);
+        }
+
+        .album-info {
+            padding: 1.5rem;
+        }
+
+        .photo-list {
+            padding: 1rem;
+            background: var(--surface-light);
+            display: none;
+        }
+
+        .photo-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: var(--surface-dark);
+            border-radius: var(--border-radius-sm);
+        }
+
+        .photo-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: var(--border-radius-sm);
+        }
+
+        .btn-download-photo {
+            background: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .btn-download-photo:hover {
+            background: var(--primary-dark);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="header-content">
-                <h1><i class="fas fa-camera-retro"></i> GalleryPix</h1>
-                <p>Your personal photo storage in the cloud</p>
-                <div class="header-buttons">
-                    <a href="creator.html" class="btn btn-secondary btn-glow">
-                        <i class="fas fa-user"></i>
-                        <span>About Creator</span>
-                    </a>
-                    <a href="create-album.html" class="btn btn-primary btn-glow">
-                        <i class="fas fa-plus"></i>
-                        <span>New Album</span>
-                    </a>
-                </div>
+            <h1><i class="fas fa-camera-retro"></i> GalleryPix</h1>
+            <p>Your personal photo storage</p>
+            <div style="margin-top: 1.5rem;">
+                <a href="creator.html" style="background: rgba(255,255,255,0.1); color: white; padding: 0.8rem 1.5rem; border-radius: 50px; margin-right: 1rem;">
+                    <i class="fas fa-user"></i> About Creator
+                </a>
+                <a href="create-album.html" style="background: white; color: black; padding: 0.8rem 1.5rem; border-radius: 50px;">
+                    <i class="fas fa-plus"></i> New Album
+                </a>
             </div>
         </header>
 
-        <div class="search-container">
-            <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search albums...">
-                <button id="search-btn" class="btn-icon btn-glow">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-            <div class="sort-options">
-                <select id="sort-select" class="btn btn-outline">
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="name-asc">A-Z</option>
-                    <option value="name-desc">Z-A</option>
-                </select>
-            </div>
-        </div>
-
         <div class="albums-container" id="albums-container">
-            <!-- Album cards will be loaded here -->
+            <!-- Albums will be loaded here -->
         </div>
     </div>
 
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2025 GalleryPix | Created with <i class="fas fa-heart pulse"></i> by Muhammad Rian Akbar</p>
-        </div>
-    </footer>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load albums from localStorage
+        const albumsDB = JSON.parse(localStorage.getItem('albumsDB')) || [];
+        const albumsContainer = document.getElementById('albums-container');
 
-    <script src="script.js"></script>
+        // Render all albums
+        function renderAlbums() {
+            albumsContainer.innerHTML = '';
+            
+            if (albumsDB.length === 0) {
+                albumsContainer.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: rgba(255,255,255,0.5);">
+                        <i class="fas fa-images" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <p>No albums found. Create your first album!</p>
+                        <a href="create-album.html" style="display: inline-block; background: var(--primary); color: var(--on-primary); padding: 0.8rem 1.5rem; border-radius: 50px; margin-top: 1rem;">
+                            Create Album
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+            
+            albumsDB.forEach((album, index) => {
+                const albumCard = document.createElement('div');
+                albumCard.className = 'album-card';
+                albumCard.innerHTML = `
+                    <div class="album-cover" style="background-image: url('${album.cover}')">
+                        <div class="album-overlay">
+                            <div class="album-actions">
+                                <button class="view-photos-btn" data-index="${index}" title="View Photos">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="download-all-btn" data-index="${index}" title="Download All">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="album-info">
+                        <h3>${album.name}</h3>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+                            <i class="fas fa-images"></i> ${album.photos.length} photos
+                        </div>
+                    </div>
+                    <div class="photo-list" id="photo-list-${index}">
+                        ${album.photos.map((photo, photoIndex) => `
+                            <div class="photo-item">
+                                <img src="${photo}" alt="Photo ${photoIndex + 1}">
+                                <button class="btn-download-photo" data-album="${index}" data-photo="${photoIndex}">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                albumsContainer.appendChild(albumCard);
+            });
+
+            // Add event listeners
+            document.querySelectorAll('.view-photos-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = this.dataset.index;
+                    const photoList = document.getElementById(`photo-list-${index}`);
+                    photoList.style.display = photoList.style.display === 'none' ? 'block' : 'none';
+                });
+            });
+
+            document.querySelectorAll('.btn-download-photo').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const albumIndex = this.dataset.album;
+                    const photoIndex = this.dataset.photo;
+                    const photoUrl = albumsDB[albumIndex].photos[photoIndex];
+                    const photoName = albumsDB[albumIndex].photoNames?.[photoIndex] || 
+                                     `${albumsDB[albumIndex].name}_${photoIndex + 1}.jpg`;
+                    downloadPhoto(photoUrl, photoName);
+                });
+            });
+
+            document.querySelectorAll('.download-all-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const albumIndex = this.dataset.index;
+                    const album = albumsDB[albumIndex];
+                    album.photos.forEach((photo, i) => {
+                        const photoName = album.photoNames?.[i] || `${album.name}_${i + 1}.jpg`;
+                        setTimeout(() => {
+                            downloadPhoto(photo, photoName);
+                        }, i * 300); // Stagger downloads
+                    });
+                });
+            });
+        }
+
+        // Download function
+        function downloadPhoto(photoUrl, photoName) {
+            const a = document.createElement('a');
+            a.href = photoUrl;
+            a.download = photoName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Initial render
+        renderAlbums();
+    });
+    </script>
 </body>
 </html>
