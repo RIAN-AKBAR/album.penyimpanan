@@ -17,41 +17,24 @@
         <div class="creator-card">
             <h2><i class="fas fa-plus-circle"></i> Create New Album</h2>
             
+            <!-- Simplified Form - Only Album Name -->
             <div class="form-group">
                 <label for="album-name"><i class="fas fa-heading"></i> Album Name</label>
-                <input type="text" id="album-name" placeholder="My Awesome Album">
+                <input type="text" id="album-name" placeholder="Enter album name" required>
             </div>
             
-            <div class="form-group">
-                <label for="album-description"><i class="fas fa-align-left"></i> Description</label>
-                <textarea id="album-description" placeholder="Describe your album..."></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label><i class="fas fa-image"></i> Cover Image</label>
-                <div class="upload-area" id="upload-area">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Drag & drop cover or click to browse</p>
-                    <input type="file" id="cover-image" accept="image/*">
-                </div>
-                <div class="preview" id="preview"></div>
-            </div>
-            
+            <!-- Photo Upload Area Only -->
             <div class="form-group">
                 <label><i class="fas fa-images"></i> Add Photos</label>
                 <div class="photo-upload-area" id="photo-upload-area">
                     <i class="fas fa-cloud-upload-alt"></i>
                     <p>Drag & drop photos or click to browse</p>
-                    <input type="file" id="photos-input" multiple accept="image/*">
+                    <input type="file" id="photos-input" multiple accept="image/*" required>
                 </div>
                 <div class="photos-preview" id="photos-preview"></div>
             </div>
             
             <div class="form-actions">
-                <button id="cancel-btn" class="btn btn-outline btn-glow">
-                    <i class="fas fa-times"></i>
-                    <span>Cancel</span>
-                </button>
                 <button id="create-album-btn" class="btn btn-primary btn-glow">
                     <i class="fas fa-save"></i>
                     <span>Create Album</span>
@@ -62,10 +45,107 @@
 
     <footer>
         <div class="footer-content">
-            <p>&copy; 2025 GalleryPix | Dark Mode</p>
+            <p>&copy; 2025 GalleryPix | Simple Upload</p>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const photosInput = document.getElementById('photos-input');
+        const photosPreview = document.getElementById('photos-preview');
+        const albumName = document.getElementById('album-name');
+        const createAlbumBtn = document.getElementById('create-album-btn');
+        
+        let photos = [];
+
+        // Handle photo upload
+        photosInput.addEventListener('change', function(e) {
+            photos = [];
+            photosPreview.innerHTML = '';
+            
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        photos.push(event.target.result);
+                        renderPhotosPreview();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+
+        // Render photo previews
+        function renderPhotosPreview() {
+            photosPreview.innerHTML = '';
+            
+            photos.forEach((photo, index) => {
+                const thumbnail = document.createElement('div');
+                thumbnail.className = 'photo-thumbnail';
+                thumbnail.innerHTML = `
+                    <img src="${photo}" alt="Photo ${index + 1}">
+                `;
+                photosPreview.appendChild(thumbnail);
+            });
+        }
+
+        // Create album function
+        createAlbumBtn.addEventListener('click', function() {
+            if (!albumName.value || photos.length === 0) {
+                alert('Please enter an album name and add at least one photo');
+                return;
+            }
+
+            // Get existing albums or initialize empty array
+            let albumsDB = JSON.parse(localStorage.getItem('albumsDB')) || [];
+            
+            // Create new album (using first photo as cover)
+            const newAlbum = {
+                id: Date.now().toString(),
+                name: albumName.value,
+                cover: photos[0], // Use first photo as cover
+                photos: photos,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Add to albums
+            albumsDB.unshift(newAlbum);
+            
+            // Save to localStorage
+            localStorage.setItem('albumsDB', JSON.stringify(albumsDB));
+            
+            alert('Album created successfully!');
+            window.location.href = 'index.html';
+        });
+
+        // Drag and drop functionality
+        const uploadArea = document.getElementById('photo-upload-area');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--primary)';
+            uploadArea.style.backgroundColor = 'rgba(187, 134, 252, 0.1)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            uploadArea.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            uploadArea.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                photosInput.files = files;
+                const event = new Event('change');
+                photosInput.dispatchEvent(event);
+            }
+        });
+    });
+    </script>
 </body>
 </html>
