@@ -124,6 +124,72 @@ header p {
     color: rgba(255, 255, 255, 0.9);
 }
 
+.header-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+/* Search and Sort */
+.search-sort {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 1.5rem;
+    align-items: center;
+}
+
+.search-bar {
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    background-color: var(--surface);
+    border-radius: 50px;
+    overflow: hidden;
+    box-shadow: var(--box-shadow-sm);
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background-color: transparent;
+    color: var(--on-surface);
+}
+
+.search-bar button {
+    padding: 0 1.5rem;
+    background-color: var(--primary);
+    color: var(--on-primary);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.search-bar button:hover {
+    background-color: var(--primary-dark);
+}
+
+.sort-options select {
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    border: none;
+    background-color: var(--surface);
+    color: var(--on-surface);
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: var(--box-shadow-sm);
+    outline: none;
+    transition: var(--transition);
+}
+
+.sort-options select:hover {
+    background-color: var(--surface-light);
+}
+
 /* Button Styles */
 .btn {
     display: inline-flex;
@@ -223,6 +289,8 @@ header p {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.5rem;
     padding: 1.5rem;
+    will-change: transform;
+    contain: content;
 }
 
 .album-card {
@@ -232,6 +300,8 @@ header p {
     box-shadow: var(--box-shadow-sm);
     transition: var(--transition);
     position: relative;
+    will-change: transform;
+    contain: layout;
 }
 
 .album-card:hover {
@@ -453,6 +523,38 @@ header p {
     cursor: pointer;
 }
 
+/* Upload Progress */
+.upload-progress {
+    width: 100%;
+    background: var(--surface-dark);
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+    margin-bottom: 1rem;
+    position: relative;
+    display: none;
+}
+
+.progress-bar {
+    height: 20px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: var(--on-primary);
+    font-weight: 500;
+}
+
 /* Photos Preview */
 .photos-preview {
     display: grid;
@@ -598,6 +700,23 @@ header p {
     box-shadow: 0 10px 25px rgba(187, 134, 252, 0.4);
 }
 
+/* Pagination Controls */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 2rem 0;
+    padding: 1rem;
+}
+
+#page-info {
+    font-weight: 500;
+    color: var(--text-secondary);
+    min-width: 100px;
+    text-align: center;
+}
+
 /* Toast Notifications */
 .toast {
     position: fixed;
@@ -637,6 +756,119 @@ header p {
     margin-bottom: 1.5rem;
 }
 
+/* Profile Page Styles */
+.creator-profile {
+    position: relative;
+}
+
+.profile-card {
+    background: var(--surface);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--box-shadow-lg);
+    margin-top: 3rem;
+}
+
+.profile-header {
+    position: relative;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--primary-variant), var(--primary-dark));
+}
+
+.profile-content {
+    position: relative;
+    z-index: 2;
+}
+
+.profile-img-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid var(--surface);
+}
+
+.profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--on-primary);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tagline {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2rem;
+    font-weight: 300;
+}
+
+.profile-body {
+    padding: 2rem;
+}
+
+.section-card {
+    background: var(--surface-light);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+}
+
+.section-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--box-shadow-lg);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-header i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    background: rgba(187, 134, 252, 0.1);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--on-surface);
+}
+
+.section-content {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.8;
+}
+
+.contact-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
     .container, .creator-container {
@@ -666,6 +898,15 @@ header p {
     .btn {
         width: 100%;
     }
+    
+    .profile-img-container {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .contact-buttons {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 480px) {
@@ -692,5 +933,13 @@ header p {
     .photo-actions {
         width: 100%;
         justify-content: flex-end;
+    }
+    
+    .search-sort {
+        flex-direction: column;
+    }
+    
+    .search-bar, .sort-options select {
+        width: 100%;
     }
 }
