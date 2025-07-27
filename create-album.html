@@ -4,26 +4,154 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Album - GalleryPix</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta name="theme-color" content="#0f0f0f">
+    <style>
+        :root {
+            --primary: #bb86fc;
+            --primary-dark: #9a67cc;
+            --background: #0f0f0f;
+            --surface: #1e1e1e;
+            --surface-light: #2d2d2d;
+            --on-primary: #000000;
+            --on-surface: #ffffff;
+            --border-radius: 16px;
+            --border-radius-sm: 8px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            color: var(--on-surface);
+            margin: 0;
+            padding: 0;
+        }
+
+        .creator-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+        }
+
+        .creator-card {
+            background: var(--surface);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .floating-back-btn {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--surface);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            border: 2px solid var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--surface-light);
+            color: var(--on-surface);
+        }
+
+        .photo-upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .photo-upload-area:hover {
+            border-color: var(--primary);
+        }
+
+        .photos-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .photo-thumbnail {
+            position: relative;
+            height: 120px;
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+        }
+
+        .photo-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--on-primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+    </style>
 </head>
 <body>
     <div class="creator-container">
-        <a href="index.html" class="floating-back-btn btn-glow">
+        <a href="index.html" class="floating-back-btn">
             <i class="fas fa-arrow-left"></i>
         </a>
         
         <div class="creator-card">
             <h2><i class="fas fa-plus-circle"></i> Create New Album</h2>
             
-            <!-- Simplified Form - Only Album Name -->
             <div class="form-group">
                 <label for="album-name"><i class="fas fa-heading"></i> Album Name</label>
                 <input type="text" id="album-name" placeholder="Enter album name" required>
             </div>
             
-            <!-- Photo Upload Area Only -->
             <div class="form-group">
                 <label><i class="fas fa-images"></i> Add Photos</label>
                 <div class="photo-upload-area" id="photo-upload-area">
@@ -35,7 +163,7 @@
             </div>
             
             <div class="form-actions">
-                <button id="create-album-btn" class="btn btn-primary btn-glow">
+                <button id="create-album-btn" class="btn btn-primary">
                     <i class="fas fa-save"></i>
                     <span>Create Album</span>
                 </button>
@@ -43,22 +171,17 @@
         </div>
     </div>
 
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2025 GalleryPix | Simple Upload</p>
-        </div>
-    </footer>
-
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const photosInput = document.getElementById('photos-input');
         const photosPreview = document.getElementById('photos-preview');
         const albumName = document.getElementById('album-name');
         const createAlbumBtn = document.getElementById('create-album-btn');
+        const uploadArea = document.getElementById('photo-upload-area');
         
         let photos = [];
 
-        // Handle photo upload
+        // Handle file selection
         photosInput.addEventListener('change', function(e) {
             photos = [];
             photosPreview.innerHTML = '';
@@ -68,7 +191,10 @@
                 files.forEach(file => {
                     const reader = new FileReader();
                     reader.onload = function(event) {
-                        photos.push(event.target.result);
+                        photos.push({
+                            url: event.target.result,
+                            name: file.name
+                        });
                         renderPhotosPreview();
                     };
                     reader.readAsDataURL(file);
@@ -84,7 +210,7 @@
                 const thumbnail = document.createElement('div');
                 thumbnail.className = 'photo-thumbnail';
                 thumbnail.innerHTML = `
-                    <img src="${photo}" alt="Photo ${index + 1}">
+                    <img src="${photo.url}" alt="${photo.name}">
                 `;
                 photosPreview.appendChild(thumbnail);
             });
@@ -104,8 +230,9 @@
             const newAlbum = {
                 id: Date.now().toString(),
                 name: albumName.value,
-                cover: photos[0], // Use first photo as cover
-                photos: photos,
+                cover: photos[0].url,
+                photos: photos.map(photo => photo.url),
+                photoNames: photos.map(photo => photo.name),
                 createdAt: new Date().toISOString()
             };
             
@@ -120,23 +247,18 @@
         });
 
         // Drag and drop functionality
-        const uploadArea = document.getElementById('photo-upload-area');
-        
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             uploadArea.style.borderColor = 'var(--primary)';
-            uploadArea.style.backgroundColor = 'rgba(187, 134, 252, 0.1)';
         });
         
         uploadArea.addEventListener('dragleave', () => {
             uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-            uploadArea.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
         });
         
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-            uploadArea.style.backgroundColor = 'rgba(255, 255, 255, 0.03)';
             
             const files = e.dataTransfer.files;
             if (files.length > 0) {
@@ -146,6 +268,16 @@
             }
         });
     });
+
+    // Download function to be used in index.html
+    function downloadPhoto(photoUrl, photoName) {
+        const a = document.createElement('a');
+        a.href = photoUrl;
+        a.download = photoName || 'photo_' + Date.now() + '.jpg';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
     </script>
 </body>
 </html>
