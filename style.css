@@ -74,7 +74,7 @@ header p {
     align-items: center;
     justify-content: center;
     padding: 0.8rem 1.5rem;
-    border-radius: 50px;
+    border-radius: var(--border-radius);
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
@@ -133,7 +133,7 @@ header p {
     text-decoration: none;
     font-weight: 500;
     padding: 0.5rem 1rem;
-    border-radius: 50px;
+    border-radius: var(--border-radius);
     transition: all 0.3s;
 }
 
@@ -155,7 +155,7 @@ header p {
     min-width: 250px;
     display: flex;
     background-color: var(--surface);
-    border-radius: 50px;
+    border-radius: var(--border-radius);
     overflow: hidden;
     box-shadow: var(--box-shadow);
 }
@@ -185,7 +185,7 @@ header p {
 
 .sort-options select {
     padding: 0.8rem 1.5rem;
-    border-radius: 50px;
+    border-radius: var(--border-radius);
     border: none;
     background-color: var(--surface);
     color: var(--on-surface);
@@ -699,23 +699,4 @@ footer p {
     
     .btn:hover, .social-link:hover, .app-link:hover {
         transform: none;
-    }
-}
-
-/* Dark/Light Mode Toggle (Future Enhancement) */
-.theme-toggle {
-    position: fixed;
-    bottom: 1rem;
-    right: 1rem;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--primary);
-    color: var(--on-primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: var(--box-shadow);
-    z-index: 100;
-}
+   
