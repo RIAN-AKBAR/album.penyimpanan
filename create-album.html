@@ -6,12 +6,15 @@
     <title>Create Album - GalleryPix</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta name="theme-color" content="#121212">
+    <meta name="theme-color" content="#0f0f0f">
 </head>
 <body>
     <div class="creator-container">
+        <a href="index.html" class="floating-back-btn btn-glow">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        
         <div class="creator-card">
-            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
             <h2><i class="fas fa-plus-circle"></i> Create New Album</h2>
             
             <div class="form-group">
@@ -45,8 +48,14 @@
             </div>
             
             <div class="form-actions">
-                <button id="cancel-btn" class="btn-cancel">Cancel</button>
-                <button id="create-album-btn" class="btn-create"><i class="fas fa-save"></i> Create Album</button>
+                <button id="cancel-btn" class="btn btn-outline btn-glow">
+                    <i class="fas fa-times"></i>
+                    <span>Cancel</span>
+                </button>
+                <button id="create-album-btn" class="btn btn-primary btn-glow">
+                    <i class="fas fa-save"></i>
+                    <span>Create Album</span>
+                </button>
             </div>
         </div>
     </div>
