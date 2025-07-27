@@ -6,7 +6,7 @@
     <title>GalleryPix - Your Photo Storage</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta name="theme-color" content="#121212">
+    <meta name="theme-color" content="#0f0f0f">
 </head>
 <body>
     <div class="container">
@@ -15,8 +15,14 @@
                 <h1><i class="fas fa-camera-retro"></i> GalleryPix</h1>
                 <p>Your personal photo storage in the cloud</p>
                 <div class="header-buttons">
-                    <a href="creator.html" class="btn-secondary"><i class="fas fa-user"></i> Creator</a>
-                    <a href="create-album.html" class="btn-create"><i class="fas fa-plus"></i> New Album</a>
+                    <a href="creator.html" class="btn btn-secondary btn-glow">
+                        <i class="fas fa-user"></i>
+                        <span>About Creator</span>
+                    </a>
+                    <a href="create-album.html" class="btn btn-primary btn-glow">
+                        <i class="fas fa-plus"></i>
+                        <span>New Album</span>
+                    </a>
                 </div>
             </div>
         </header>
@@ -24,10 +30,12 @@
         <div class="search-container">
             <div class="search-bar">
                 <input type="text" id="search-input" placeholder="Search albums...">
-                <button id="search-btn"><i class="fas fa-search"></i></button>
+                <button id="search-btn" class="btn-icon btn-glow">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
             <div class="sort-options">
-                <select id="sort-select">
+                <select id="sort-select" class="btn btn-outline">
                     <option value="newest">Newest First</option>
                     <option value="oldest">Oldest First</option>
                     <option value="name-asc">A-Z</option>
@@ -37,17 +45,13 @@
         </div>
 
         <div class="albums-container" id="albums-container">
-            <!-- Albums will be loaded here -->
+            <!-- Album cards will be loaded here -->
         </div>
     </div>
 
     <footer>
         <div class="footer-content">
-            <p>&copy; 2025 GalleryPix | Created with <i class="fas fa-heart"></i> by Muhammad Rian Akbar</p>
-            <div class="app-links">
-                <a href="#" class="app-link"><i class="fab fa-android"></i> Android</a>
-                <a href="#" class="app-link"><i class="fab fa-apple"></i> iOS</a>
-            </div>
+            <p>&copy; 2025 GalleryPix | Created with <i class="fas fa-heart pulse"></i> by Muhammad Rian Akbar</p>
         </div>
     </footer>
 
