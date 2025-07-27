@@ -4,139 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Album - GalleryPix</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #bb86fc;
-            --primary-dark: #9a67cc;
-            --background: #0f0f0f;
-            --surface: #1e1e1e;
-            --surface-light: #2d2d2d;
-            --on-primary: #000000;
-            --on-surface: #ffffff;
-            --border-radius: 16px;
-            --border-radius-sm: 8px;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--background);
-            color: var(--on-surface);
-            margin: 0;
-            padding: 0;
-        }
-
-        .creator-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 1rem;
-        }
-
-        .creator-card {
-            background: var(--surface);
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
-
-        .floating-back-btn {
-            position: fixed;
-            top: 1.5rem;
-            left: 1.5rem;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--surface);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-            border: 2px solid var(--primary);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .form-group input[type="text"] {
-            width: 100%;
-            padding: 0.8rem;
-            border-radius: var(--border-radius-sm);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: var(--surface-light);
-            color: var(--on-surface);
-        }
-
-        .photo-upload-area {
-            border: 2px dashed rgba(255, 255, 255, 0.2);
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .photo-upload-area:hover {
-            border-color: var(--primary);
-        }
-
-        .photos-preview {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .photo-thumbnail {
-            position: relative;
-            height: 120px;
-            border-radius: var(--border-radius-sm);
-            overflow: hidden;
-        }
-
-        .photo-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .btn {
-            padding: 0.8rem 1.5rem;
-            border-radius: 50px;
-            border: none;
-            font-weight: 500;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: var(--on-primary);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 2rem;
-        }
-    </style>
 </head>
 <body>
     <div class="creator-container">
@@ -164,13 +33,13 @@
             
             <div class="form-actions">
                 <button id="create-album-btn" class="btn btn-primary">
-                    <i class="fas fa-save"></i>
-                    <span>Create Album</span>
+                    <i class="fas fa-save"></i> Create Album
                 </button>
             </div>
         </div>
     </div>
 
+    <script src="script.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const photosInput = document.getElementById('photos-input');
@@ -205,13 +74,10 @@
         // Render photo previews
         function renderPhotosPreview() {
             photosPreview.innerHTML = '';
-            
             photos.forEach((photo, index) => {
                 const thumbnail = document.createElement('div');
                 thumbnail.className = 'photo-thumbnail';
-                thumbnail.innerHTML = `
-                    <img src="${photo.url}" alt="${photo.name}">
-                `;
+                thumbnail.innerHTML = `<img src="${photo.url}" alt="${photo.name}">`;
                 photosPreview.appendChild(thumbnail);
             });
         }
@@ -219,14 +85,12 @@
         // Create album function
         createAlbumBtn.addEventListener('click', function() {
             if (!albumName.value || photos.length === 0) {
-                alert('Please enter an album name and add at least one photo');
+                showToast('Please enter an album name and add at least one photo');
                 return;
             }
 
-            // Get existing albums or initialize empty array
             let albumsDB = JSON.parse(localStorage.getItem('albumsDB')) || [];
             
-            // Create new album (using first photo as cover)
             const newAlbum = {
                 id: Date.now().toString(),
                 name: albumName.value,
@@ -236,14 +100,11 @@
                 createdAt: new Date().toISOString()
             };
             
-            // Add to albums
             albumsDB.unshift(newAlbum);
-            
-            // Save to localStorage
             localStorage.setItem('albumsDB', JSON.stringify(albumsDB));
             
-            alert('Album created successfully!');
-            window.location.href = 'index.html';
+            showToast('Album created successfully!');
+            setTimeout(() => window.location.href = 'index.html', 1500);
         });
 
         // Drag and drop functionality
@@ -268,16 +129,6 @@
             }
         });
     });
-
-    // Download function to be used in index.html
-    function downloadPhoto(photoUrl, photoName) {
-        const a = document.createElement('a');
-        a.href = photoUrl;
-        a.download = photoName || 'photo_' + Date.now() + '.jpg';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
     </script>
 </body>
 </html>
