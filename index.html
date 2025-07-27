@@ -30,14 +30,25 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Load albums from localStorage
-        let albumsDB = JSON.parse(localStorage.getItem('albumsDB')) || [];
+        let albumsDB = loadAlbums();
         const albumsContainer = document.getElementById('albums-container');
         
-        // Check for refresh parameter - NEW CODE
+        // Check for refresh parameter
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('t')) {
+        if (urlParams.has('refresh')) {
             // Force reload from storage
-            albumsDB = JSON.parse(localStorage.getItem('albumsDB')) || [];
+            albumsDB = loadAlbums();
+        }
+
+        // Load albums with error handling
+        function loadAlbums() {
+            try {
+                const albums = JSON.parse(localStorage.getItem('albumsDB'));
+                return Array.isArray(albums) ? albums : [];
+            } catch (e) {
+                console.error('Error loading albums:', e);
+                return [];
+            }
         }
 
         // Render all albums
@@ -165,16 +176,16 @@
         function downloadPhoto(photoUrl, photoName) {
             const a = document.createElement('a');
             a.href = photoUrl;
-            a.download = photoName;
+            a.download = photoName || 'photo_' + Date.now() + '.jpg';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
         }
 
-        // Confirmation dialog functions
+        // Confirmation dialog
         function showConfirmation(message, action) {
             const dialog = document.createElement('div');
-            dialog.className = 'confirmation-dialog active';
+            dialog.className = 'confirmation-dialog';
             dialog.innerHTML = `
                 <div class="confirmation-content">
                     <h3>${message}</h3>
