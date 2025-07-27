@@ -16,6 +16,7 @@
             --on-surface: #ffffff;
             --border-radius: 16px;
             --border-radius-sm: 8px;
+            --error: #cf6679;
         }
 
         body {
@@ -124,7 +125,7 @@
             justify-content: space-between;
             padding: 0.5rem;
             margin-bottom: 0.5rem;
-            background: var(--surface-dark);
+            background: var(--surface);
             border-radius: var(--border-radius-sm);
         }
 
@@ -133,6 +134,11 @@
             height: 60px;
             object-fit: cover;
             border-radius: var(--border-radius-sm);
+        }
+
+        .photo-actions {
+            display: flex;
+            gap: 0.5rem;
         }
 
         .btn-download-photo {
@@ -150,6 +156,83 @@
 
         .btn-download-photo:hover {
             background: var(--primary-dark);
+        }
+
+        .btn-delete-photo {
+            background: var(--error);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .btn-delete-photo:hover {
+            background: #b00020;
+        }
+
+        .btn-delete-album {
+            background: var(--error);
+            color: white;
+        }
+
+        .confirmation-dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .confirmation-dialog.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .confirmation-content {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            justify-content: center;
+        }
+
+        .confirmation-buttons button {
+            padding: 0.5rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-confirm {
+            background: var(--error);
+            color: white;
+        }
+
+        .btn-cancel {
+            background: var(--surface-light);
+            color: var(--on-surface);
         }
     </style>
 </head>
@@ -173,11 +256,73 @@
         </div>
     </div>
 
+    <!-- Confirmation Dialog -->
+    <div class="confirmation-dialog" id="confirmation-dialog">
+        <div class="confirmation-content">
+            <h3 id="confirmation-message">Are you sure you want to delete this album?</h3>
+            <div class="confirmation-buttons">
+                <button class="btn-confirm" id="confirm-delete">Delete</button>
+                <button class="btn-cancel" id="cancel-delete">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Load albums from localStorage
-        const albumsDB = JSON.parse(localStorage.getItem('albumsDB')) || [];
+        let albumsDB = JSON.parse(localStorage.getItem('albumsDB')) || [];
         const albumsContainer = document.getElementById('albums-container');
+        const confirmationDialog = document.getElementById('confirmation-dialog');
+        const confirmDeleteBtn = document.getElementById('confirm-delete');
+        const cancelDeleteBtn = document.getElementById('cancel-delete');
+        const confirmationMessage = document.getElementById('confirmation-message');
+
+        let currentDeleteAction = null;
+
+        // Show confirmation dialog
+        function showConfirmation(message, action) {
+            confirmationMessage.textContent = message;
+            currentDeleteAction = action;
+            confirmationDialog.classList.add('active');
+        }
+
+        // Hide confirmation dialog
+        function hideConfirmation() {
+            confirmationDialog.classList.remove('active');
+            currentDeleteAction = null;
+        }
+
+        // Confirm delete handler
+        confirmDeleteBtn.addEventListener('click', function() {
+            if (currentDeleteAction) {
+                currentDeleteAction();
+            }
+            hideConfirmation();
+        });
+
+        // Cancel delete handler
+        cancelDeleteBtn.addEventListener('click', hideConfirmation);
+
+        // Delete album function
+        function deleteAlbum(index) {
+            albumsDB.splice(index, 1);
+            localStorage.setItem('albumsDB', JSON.stringify(albumsDB));
+            renderAlbums();
+        }
+
+        // Delete photo function
+        function deletePhoto(albumIndex, photoIndex) {
+            albumsDB[albumIndex].photos.splice(photoIndex, 1);
+            if (albumsDB[albumIndex].photoNames) {
+                albumsDB[albumIndex].photoNames.splice(photoIndex, 1);
+            }
+            // If we deleted the cover photo, update the cover
+            if (photoIndex === 0 && albumsDB[albumIndex].photos.length > 0) {
+                albumsDB[albumIndex].cover = albumsDB[albumIndex].photos[0];
+            }
+            localStorage.setItem('albumsDB', JSON.stringify(albumsDB));
+            renderAlbums();
+        }
 
         // Render all albums
         function renderAlbums() {
@@ -209,6 +354,9 @@
                                 <button class="download-all-btn" data-index="${index}" title="Download All">
                                     <i class="fas fa-download"></i>
                                 </button>
+                                <button class="delete-album-btn" data-index="${index}" title="Delete Album">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -222,9 +370,14 @@
                         ${album.photos.map((photo, photoIndex) => `
                             <div class="photo-item">
                                 <img src="${photo}" alt="Photo ${photoIndex + 1}">
-                                <button class="btn-download-photo" data-album="${index}" data-photo="${photoIndex}">
-                                    <i class="fas fa-download"></i> Download
-                                </button>
+                                <div class="photo-actions">
+                                    <button class="btn-download-photo" data-album="${index}" data-photo="${photoIndex}">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="btn-delete-photo" data-album="${index}" data-photo="${photoIndex}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </div>
                         `).join('')}
                     </div>
@@ -252,6 +405,20 @@
                 });
             });
 
+            document.querySelectorAll('.btn-delete-photo').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const albumIndex = this.dataset.album;
+                    const photoIndex = this.dataset.photo;
+                    const photoName = albumsDB[albumIndex].photoNames?.[photoIndex] || 
+                                    `photo ${photoIndex + 1}`;
+                    
+                    showConfirmation(
+                        `Are you sure you want to delete "${photoName}" from "${albumsDB[albumIndex].name}"?`,
+                        () => deletePhoto(albumIndex, photoIndex)
+                    );
+                });
+            });
+
             document.querySelectorAll('.download-all-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const albumIndex = this.dataset.index;
@@ -262,6 +429,18 @@
                             downloadPhoto(photo, photoName);
                         }, i * 300); // Stagger downloads
                     });
+                });
+            });
+
+            document.querySelectorAll('.delete-album-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const albumIndex = this.dataset.index;
+                    const albumName = albumsDB[albumIndex].name;
+                    
+                    showConfirmation(
+                        `Are you sure you want to delete the album "${albumName}" and all its photos?`,
+                        () => deleteAlbum(albumIndex)
+                    );
                 });
             });
         }
