@@ -25,8 +25,12 @@
                 <label><i class="fas fa-images"></i> Add Photos</label>
                 <div class="photo-upload-area" id="photo-upload-area">
                     <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Drag & drop photos or click to browse Max 20 photos</p>
+                    <p>Drag & drop photos or click to browse</p>
                     <input type="file" id="photos-input" multiple accept="image/*" required>
+                </div>
+                <div class="upload-progress" id="upload-progress" style="display: none;">
+                    <div class="progress-bar"></div>
+                    <div class="progress-text">0%</div>
                 </div>
                 <div class="photos-preview" id="photos-preview"></div>
             </div>
@@ -43,127 +47,5 @@
     </div>
 
     <script src="script.js"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const photosInput = document.getElementById('photos-input');
-        const photosPreview = document.getElementById('photos-preview');
-        const albumName = document.getElementById('album-name');
-        const createAlbumBtn = document.getElementById('create-album-btn');
-        const createAnotherBtn = document.getElementById('create-another-btn');
-        const uploadArea = document.getElementById('photo-upload-area');
-        
-        let photos = [];
-
-        // Handle file selection
-        photosInput.addEventListener('change', function(e) {
-            photos = [];
-            photosPreview.innerHTML = '';
-            
-            const files = Array.from(e.target.files);
-            if (files.length > 0) {
-                files.forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        photos.push({
-                            url: event.target.result,
-                            name: file.name
-                        });
-                        renderPhotosPreview();
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
-        });
-
-        // Render photo previews
-        function renderPhotosPreview() {
-            photosPreview.innerHTML = '';
-            photos.forEach((photo, index) => {
-                const thumbnail = document.createElement('div');
-                thumbnail.className = 'photo-thumbnail';
-                thumbnail.innerHTML = `
-                    <img src="${photo.url}" alt="${photo.name}">
-                    <button class="remove-photo" data-index="${index}">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-                photosPreview.appendChild(thumbnail);
-            });
-
-            // Add event listeners to remove buttons
-            document.querySelectorAll('.remove-photo').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const index = parseInt(this.dataset.index);
-                    photos.splice(index, 1);
-                    renderPhotosPreview();
-                });
-            });
-        }
-
-        // Create album function
-        function createAlbum() {
-            if (!albumName.value || photos.length === 0) {
-                showToast('Please enter an album name and add at least one photo');
-                return;
-            }
-
-            let albumsDB = JSON.parse(localStorage.getItem('albumsDB')) || [];
-            
-            const newAlbum = {
-                id: Date.now().toString(),
-                name: albumName.value,
-                cover: photos[0].url,
-                photos: photos.map(photo => photo.url),
-                photoNames: photos.map(photo => photo.name),
-                createdAt: new Date().toISOString()
-            };
-            
-            albumsDB.unshift(newAlbum);
-            localStorage.setItem('albumsDB', JSON.stringify(albumsDB));
-            
-            showToast('Album created successfully!');
-            
-            // Reset form but keep the page
-            albumName.value = '';
-            photos = [];
-            photosPreview.innerHTML = '';
-            photosInput.value = '';
-            
-            // Show create another button
-            createAlbumBtn.style.display = 'none';
-            createAnotherBtn.style.display = 'inline-flex';
-        }
-
-        // Event listeners
-        createAlbumBtn.addEventListener('click', createAlbum);
-        
-        createAnotherBtn.addEventListener('click', function() {
-            createAlbumBtn.style.display = 'inline-flex';
-            this.style.display = 'none';
-        });
-
-        // Drag and drop functionality
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = 'var(--primary)';
-        });
-        
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-        });
-        
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-            
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                photosInput.files = files;
-                const event = new Event('change');
-                photosInput.dispatchEvent(event);
-            }
-        });
-    });
-    </script>
 </body>
 </html>
