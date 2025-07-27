@@ -35,6 +35,9 @@
                 <button id="create-album-btn" class="btn btn-primary">
                     <i class="fas fa-save"></i> Create Album
                 </button>
+                <button id="create-another-btn" class="btn btn-secondary" style="display:none;">
+                    <i class="fas fa-plus"></i> Create Another Album
+                </button>
             </div>
         </div>
     </div>
@@ -46,6 +49,7 @@
         const photosPreview = document.getElementById('photos-preview');
         const albumName = document.getElementById('album-name');
         const createAlbumBtn = document.getElementById('create-album-btn');
+        const createAnotherBtn = document.getElementById('create-another-btn');
         const uploadArea = document.getElementById('photo-upload-area');
         
         let photos = [];
@@ -77,13 +81,27 @@
             photos.forEach((photo, index) => {
                 const thumbnail = document.createElement('div');
                 thumbnail.className = 'photo-thumbnail';
-                thumbnail.innerHTML = `<img src="${photo.url}" alt="${photo.name}">`;
+                thumbnail.innerHTML = `
+                    <img src="${photo.url}" alt="${photo.name}">
+                    <button class="remove-photo" data-index="${index}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
                 photosPreview.appendChild(thumbnail);
+            });
+
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.remove-photo').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    photos.splice(index, 1);
+                    renderPhotosPreview();
+                });
             });
         }
 
         // Create album function
-        createAlbumBtn.addEventListener('click', function() {
+        function createAlbum() {
             if (!albumName.value || photos.length === 0) {
                 showToast('Please enter an album name and add at least one photo');
                 return;
@@ -104,7 +122,24 @@
             localStorage.setItem('albumsDB', JSON.stringify(albumsDB));
             
             showToast('Album created successfully!');
-            setTimeout(() => window.location.href = 'index.html', 1500);
+            
+            // Reset form but keep the page
+            albumName.value = '';
+            photos = [];
+            photosPreview.innerHTML = '';
+            photosInput.value = '';
+            
+            // Show create another button
+            createAlbumBtn.style.display = 'none';
+            createAnotherBtn.style.display = 'inline-flex';
+        }
+
+        // Event listeners
+        createAlbumBtn.addEventListener('click', createAlbum);
+        
+        createAnotherBtn.addEventListener('click', function() {
+            createAlbumBtn.style.display = 'inline-flex';
+            this.style.display = 'none';
         });
 
         // Drag and drop functionality
