@@ -6,21 +6,34 @@
     <title>GalleryPix - Your Photo Storage</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="theme-color" content="#121212">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-camera-retro"></i> GalleryPix</h1>
-            <p>Your personal photo storage in the cloud</p>
-            <div class="header-buttons">
-                <a href="creator.html" class="btn-secondary">About the Creator</a>
-                <a href="create-album.html" class="btn-create">Create New Album</a>
+            <div class="header-content">
+                <h1><i class="fas fa-camera-retro"></i> GalleryPix</h1>
+                <p>Your personal photo storage in the cloud</p>
+                <div class="header-buttons">
+                    <a href="creator.html" class="btn-secondary"><i class="fas fa-user"></i> Creator</a>
+                    <a href="create-album.html" class="btn-create"><i class="fas fa-plus"></i> New Album</a>
+                </div>
             </div>
         </header>
 
-        <div class="search-bar">
-            <input type="text" id="search-input" placeholder="Search albums...">
-            <button id="search-btn"><i class="fas fa-search"></i></button>
+        <div class="search-container">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search albums...">
+                <button id="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="sort-options">
+                <select id="sort-select">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="name-asc">A-Z</option>
+                    <option value="name-desc">Z-A</option>
+                </select>
+            </div>
         </div>
 
         <div class="albums-container" id="albums-container">
@@ -29,7 +42,13 @@
     </div>
 
     <footer>
-        <p>&copy; 2025 GalleryPix. All rights reserved.</p>
+        <div class="footer-content">
+            <p>&copy; 2025 GalleryPix | Created with <i class="fas fa-heart"></i> by Muhammad Rian Akbar</p>
+            <div class="app-links">
+                <a href="#" class="app-link"><i class="fab fa-android"></i> Android</a>
+                <a href="#" class="app-link"><i class="fab fa-apple"></i> iOS</a>
+            </div>
+        </div>
     </footer>
 
     <script src="script.js"></script>
