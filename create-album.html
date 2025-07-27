@@ -3,52 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New Album - GalleryPix</title>
+    <title>Create Album - GalleryPix</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="theme-color" content="#121212">
 </head>
 <body>
     <div class="creator-container">
         <div class="creator-card">
-            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Gallery</a>
+            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
             <h2><i class="fas fa-plus-circle"></i> Create New Album</h2>
             
             <div class="form-group">
-                <label for="album-name">Album Name</label>
-                <input type="text" id="album-name" placeholder="Enter album name">
+                <label for="album-name"><i class="fas fa-heading"></i> Album Name</label>
+                <input type="text" id="album-name" placeholder="My Awesome Album">
             </div>
             
             <div class="form-group">
-                <label for="album-description">Description (Optional)</label>
-                <textarea id="album-description" placeholder="Add a short description"></textarea>
+                <label for="album-description"><i class="fas fa-align-left"></i> Description</label>
+                <textarea id="album-description" placeholder="Describe your album..."></textarea>
             </div>
             
             <div class="form-group">
-                <label for="cover-image">Cover Image</label>
+                <label><i class="fas fa-image"></i> Cover Image</label>
                 <div class="upload-area" id="upload-area">
                     <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Drag & drop cover image here or click to browse</p>
+                    <p>Drag & drop cover or click to browse</p>
                     <input type="file" id="cover-image" accept="image/*">
                 </div>
                 <div class="preview" id="preview"></div>
             </div>
             
             <div class="form-group">
-                <label>Add Photos</label>
+                <label><i class="fas fa-images"></i> Add Photos</label>
                 <div class="photo-upload-area" id="photo-upload-area">
-                    <i class="fas fa-images"></i>
-                    <p>Drag & drop photos here or click to browse</p>
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & drop photos or click to browse</p>
                     <input type="file" id="photos-input" multiple accept="image/*">
                 </div>
                 <div class="photos-preview" id="photos-preview"></div>
             </div>
             
-            <button id="create-album-btn" class="btn-create">Create Album</button>
+            <div class="form-actions">
+                <button id="cancel-btn" class="btn-cancel">Cancel</button>
+                <button id="create-album-btn" class="btn-create"><i class="fas fa-save"></i> Create Album</button>
+            </div>
         </div>
     </div>
 
     <footer>
-        <p>&copy; 2025 GalleryPix. All rights reserved.</p>
+        <div class="footer-content">
+            <p>&copy; 2025 GalleryPix | Dark Mode</p>
+        </div>
     </footer>
 
     <script src="script.js"></script>
