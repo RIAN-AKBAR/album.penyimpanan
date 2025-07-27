@@ -4,237 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GalleryPix</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #bb86fc;
-            --primary-dark: #9a67cc;
-            --background: #0f0f0f;
-            --surface: #1e1e1e;
-            --surface-light: #2d2d2d;
-            --on-primary: #000000;
-            --on-surface: #ffffff;
-            --border-radius: 16px;
-            --border-radius-sm: 8px;
-            --error: #cf6679;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--background);
-            color: var(--on-surface);
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem;
-        }
-
-        header {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            color: var(--on-primary);
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .albums-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            padding: 1rem;
-        }
-
-        .album-card {
-            background: var(--surface);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s;
-        }
-
-        .album-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-        }
-
-        .album-cover {
-            height: 200px;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-
-        .album-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: all 0.3s;
-        }
-
-        .album-card:hover .album-overlay {
-            opacity: 1;
-        }
-
-        .album-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .album-actions button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: none;
-            background: rgba(255, 255, 255, 0.9);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .album-actions button:hover {
-            transform: scale(1.1);
-        }
-
-        .album-info {
-            padding: 1.5rem;
-        }
-
-        .photo-list {
-            padding: 1rem;
-            background: var(--surface-light);
-            display: none;
-        }
-
-        .photo-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.5rem;
-            margin-bottom: 0.5rem;
-            background: var(--surface);
-            border-radius: var(--border-radius-sm);
-        }
-
-        .photo-item img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: var(--border-radius-sm);
-        }
-
-        .photo-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-download-photo {
-            background: var(--primary);
-            color: var(--on-primary);
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: var(--border-radius-sm);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
-        }
-
-        .btn-download-photo:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-delete-photo {
-            background: var(--error);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: var(--border-radius-sm);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
-        }
-
-        .btn-delete-photo:hover {
-            background: #b00020;
-        }
-
-        .btn-delete-album {
-            background: var(--error);
-            color: white;
-        }
-
-        .confirmation-dialog {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-
-        .confirmation-dialog.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .confirmation-content {
-            background: var(--surface);
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .confirmation-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            justify-content: center;
-        }
-
-        .confirmation-buttons button {
-            padding: 0.5rem 1.5rem;
-            border-radius: var(--border-radius-sm);
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .btn-confirm {
-            background: var(--error);
-            color: white;
-        }
-
-        .btn-cancel {
-            background: var(--surface-light);
-            color: var(--on-surface);
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -242,10 +13,10 @@
             <h1><i class="fas fa-camera-retro"></i> GalleryPix</h1>
             <p>Your personal photo storage</p>
             <div style="margin-top: 1.5rem;">
-                <a href="creator.html" style="background: rgba(255,255,255,0.1); color: white; padding: 0.8rem 1.5rem; border-radius: 50px; margin-right: 1rem;">
+                <a href="creator.html" class="btn btn-primary">
                     <i class="fas fa-user"></i> About Creator
                 </a>
-                <a href="create-album.html" style="background: white; color: black; padding: 0.8rem 1.5rem; border-radius: 50px;">
+                <a href="create-album.html" class="btn btn-primary" style="margin-left: 1rem;">
                     <i class="fas fa-plus"></i> New Album
                 </a>
             </div>
@@ -267,64 +38,33 @@
         </div>
     </div>
 
+    <script src="script.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Load albums from localStorage
+        const { show } = setupConfirmationDialog();
         let albumsDB = JSON.parse(localStorage.getItem('albumsDB')) || [];
         const albumsContainer = document.getElementById('albums-container');
-        const confirmationDialog = document.getElementById('confirmation-dialog');
-        const confirmDeleteBtn = document.getElementById('confirm-delete');
-        const cancelDeleteBtn = document.getElementById('cancel-delete');
-        const confirmationMessage = document.getElementById('confirmation-message');
 
-        let currentDeleteAction = null;
-
-        // Show confirmation dialog
-        function showConfirmation(message, action) {
-            confirmationMessage.textContent = message;
-            currentDeleteAction = action;
-            confirmationDialog.classList.add('active');
-        }
-
-        // Hide confirmation dialog
-        function hideConfirmation() {
-            confirmationDialog.classList.remove('active');
-            currentDeleteAction = null;
-        }
-
-        // Confirm delete handler
-        confirmDeleteBtn.addEventListener('click', function() {
-            if (currentDeleteAction) {
-                currentDeleteAction();
-            }
-            hideConfirmation();
-        });
-
-        // Cancel delete handler
-        cancelDeleteBtn.addEventListener('click', hideConfirmation);
-
-        // Delete album function
         function deleteAlbum(index) {
             albumsDB.splice(index, 1);
             localStorage.setItem('albumsDB', JSON.stringify(albumsDB));
             renderAlbums();
+            showToast('Album deleted successfully');
         }
 
-        // Delete photo function
         function deletePhoto(albumIndex, photoIndex) {
             albumsDB[albumIndex].photos.splice(photoIndex, 1);
             if (albumsDB[albumIndex].photoNames) {
                 albumsDB[albumIndex].photoNames.splice(photoIndex, 1);
             }
-            // If we deleted the cover photo, update the cover
             if (photoIndex === 0 && albumsDB[albumIndex].photos.length > 0) {
                 albumsDB[albumIndex].cover = albumsDB[albumIndex].photos[0];
             }
             localStorage.setItem('albumsDB', JSON.stringify(albumsDB));
             renderAlbums();
+            showToast('Photo deleted successfully');
         }
 
-        // Render all albums
         function renderAlbums() {
             albumsContainer.innerHTML = '';
             
@@ -333,7 +73,7 @@
                     <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: rgba(255,255,255,0.5);">
                         <i class="fas fa-images" style="font-size: 3rem; margin-bottom: 1rem;"></i>
                         <p>No albums found. Create your first album!</p>
-                        <a href="create-album.html" style="display: inline-block; background: var(--primary); color: var(--on-primary); padding: 0.8rem 1.5rem; border-radius: 50px; margin-top: 1rem;">
+                        <a href="create-album.html" class="btn btn-primary" style="margin-top: 1rem;">
                             Create Album
                         </a>
                     </div>
@@ -374,7 +114,7 @@
                                     <button class="btn-download-photo" data-album="${index}" data-photo="${photoIndex}">
                                         <i class="fas fa-download"></i>
                                     </button>
-                                    <button class="btn-delete-photo" data-album="${index}" data-photo="${photoIndex}">
+                                    <button class="btn-delete-photo btn-error" data-album="${index}" data-photo="${photoIndex}">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -412,7 +152,7 @@
                     const photoName = albumsDB[albumIndex].photoNames?.[photoIndex] || 
                                     `photo ${photoIndex + 1}`;
                     
-                    showConfirmation(
+                    show(
                         `Are you sure you want to delete "${photoName}" from "${albumsDB[albumIndex].name}"?`,
                         () => deletePhoto(albumIndex, photoIndex)
                     );
@@ -425,9 +165,7 @@
                     const album = albumsDB[albumIndex];
                     album.photos.forEach((photo, i) => {
                         const photoName = album.photoNames?.[i] || `${album.name}_${i + 1}.jpg`;
-                        setTimeout(() => {
-                            downloadPhoto(photo, photoName);
-                        }, i * 300); // Stagger downloads
+                        setTimeout(() => downloadPhoto(photo, photoName), i * 300);
                     });
                 });
             });
@@ -436,23 +174,12 @@
                 btn.addEventListener('click', function() {
                     const albumIndex = this.dataset.index;
                     const albumName = albumsDB[albumIndex].name;
-                    
-                    showConfirmation(
+                    show(
                         `Are you sure you want to delete the album "${albumName}" and all its photos?`,
                         () => deleteAlbum(albumIndex)
                     );
                 });
             });
-        }
-
-        // Download function
-        function downloadPhoto(photoUrl, photoName) {
-            const a = document.createElement('a');
-            a.href = photoUrl;
-            a.download = photoName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
         }
 
         // Initial render
