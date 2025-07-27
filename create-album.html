@@ -28,10 +28,6 @@
                     <p>Drag & drop photos or click to browse</p>
                     <input type="file" id="photos-input" multiple accept="image/*" required>
                 </div>
-                <div class="upload-progress" id="upload-progress" style="display: none;">
-                    <div class="progress-bar"></div>
-                    <div class="progress-text">0%</div>
-                </div>
                 <div class="photos-preview" id="photos-preview"></div>
             </div>
             
@@ -39,13 +35,110 @@
                 <button id="create-album-btn" class="btn btn-primary">
                     <i class="fas fa-save"></i> Create Album
                 </button>
-                <button id="create-another-btn" class="btn btn-secondary" style="display:none;">
-                    <i class="fas fa-plus"></i> Create Another Album
-                </button>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const photosInput = document.getElementById('photos-input');
+        const photosPreview = document.getElementById('photos-preview');
+        const albumName = document.getElementById('album-name');
+        const createAlbumBtn = document.getElementById('create-album-btn');
+        const uploadArea = document.getElementById('photo-upload-area');
+        
+        let photos = [];
+
+        // Handle file selection
+        photosInput.addEventListener('change', function(e) {
+            photos = [];
+            photosPreview.innerHTML = '';
+            
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        photos.push({
+                            url: event.target.result,
+                            name: file.name
+                        });
+                        renderPhotosPreview();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+
+        // Render photo previews
+        function renderPhotosPreview() {
+            photosPreview.innerHTML = '';
+            
+            photos.forEach((photo, index) => {
+                const thumbnail = document.createElement('div');
+                thumbnail.className = 'photo-thumbnail';
+                thumbnail.innerHTML = `
+                    <img src="${photo.url}" alt="${photo.name}">
+                `;
+                photosPreview.appendChild(thumbnail);
+            });
+        }
+
+        // Create album function - UPDATED
+        createAlbumBtn.addEventListener('click', function() {
+            if (!albumName.value || photos.length === 0) {
+                alert('Please enter an album name and add at least one photo');
+                return;
+            }
+
+            // Get existing albums
+            let albumsDB = JSON.parse(localStorage.getItem('albumsDB')) || [];
+            
+            // Create new album
+            const newAlbum = {
+                id: Date.now().toString(),
+                name: albumName.value,
+                cover: photos[0].url,
+                photos: photos.map(photo => photo.url),
+                photoNames: photos.map(photo => photo.name),
+                createdAt: new Date().toISOString()
+            };
+            
+            // Add to beginning of array
+            albumsDB.unshift(newAlbum);
+            
+            // Save to localStorage
+            localStorage.setItem('albumsDB', JSON.stringify(albumsDB));
+            
+            // Show success message and redirect
+            alert('Album created successfully!');
+            
+            // Force reload by adding timestamp parameter
+            window.location.href = 'index.html?t=' + Date.now();
+        });
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'var(--primary)';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                photosInput.files = files;
+                const event = new Event('change');
+                photosInput.dispatchEvent(event);
+            }
+        });
+    });
+    </script>
 </body>
 </html>
