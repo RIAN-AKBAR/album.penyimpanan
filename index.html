@@ -98,7 +98,8 @@
 
       btn.addEventListener('click', () => {
         div.remove();
-        removePhotoFromStorage(photo.name);
+        removePhotoFromStorage(photo.public_id); // Hapus dari localStorage
+        deletePhotoFromCloudinary(photo.public_id); // Hapus dari Cloudinary
       });
 
       // Tambahkan elemen <a> untuk download
@@ -114,10 +115,32 @@
       gallery.prepend(div);
     }
 
+    // Hapus foto dari Cloudinary
+    async function deletePhotoFromCloudinary(publicId) {
+      try {
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/destroy`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ public_id: publicId })
+        });
+
+        const data = await response.json();
+        if (data.result === 'ok') {
+          console.log('Foto berhasil dihapus dari Cloudinary');
+        } else {
+          console.error('Gagal menghapus foto dari Cloudinary:', data.error.message);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
     // Remove photo from localStorage
-    function removePhotoFromStorage(name) {
+    function removePhotoFromStorage(publicId) {
       const photos = JSON.parse(localStorage.getItem('photos')) || [];
-      const updatedPhotos = photos.filter(photo => photo.name !== name);
+      const updatedPhotos = photos.filter(photo => photo.public_id !== publicId);
       localStorage.setItem('photos', JSON.stringify(updatedPhotos));
     }
 
@@ -147,7 +170,8 @@
           if (data.secure_url) {
             const photo = {
               name: file.name,
-              src: data.secure_url
+              src: data.secure_url,
+              public_id: data.public_id // Simpan public_id untuk penghapusan
             };
             photos.push(photo);
             localStorage.setItem('photos', JSON.stringify(photos));
